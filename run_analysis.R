@@ -15,40 +15,28 @@ x<-rbind(xtrain,xtest)
 y<-rbind(ytrain,ytest)
 
 #extract mean and standard deviation measurements
-smry_x<-select(x,V1:V6,V41:V46,V81:V86,V121:V126,V161:V166,V201,V202,V214,
-               V215,V227,V228,V240,V241,V253,V254,V266:V271,V345:V350,
-               V424:V429,V503,V504,V516,V517,V529,V530,V542,V543)
+feat<-read.table("features.txt")
+values<-feat[grep("mean\\(\\)-?[XYZ]?|std\\(\\)-?[XYZ]?$",feat$V2),]
+smry_x<-x[,as.numeric(values$V1)]
+names(smry_x)<-values$V2
 
 #change activity names
-y[y==1]<-"walking"
-y[y==2]<-"walking_upstairs"
-y[y==3]<-"walking_downstairs"
-y[y==4]<-"sitting"
-y[y==5]<-"standing"
-y[y==6]<-"laying"
+act<-read.table("activity_labels.txt")
+y <- left_join(y,act,by="V1")
+y<-y[,2]
+y<-as.data.frame(y)
 
 #rename columns
 names(s)<-"subject"
 names(y)<-"activity"
 
-feat<-read.table("features.txt")
-values<-feat[grep("mean\\(\\)|mean\\(\\)-[XYZ]|std\\(\\)|std\\(\\)-[XYZ]$",feat$V2),]
-names(smry_x)<-values$V2
-
 #merge subject and activity data with summary data
 syx<-cbind(s,y,smry_x)
 
 #find mean of each variable in x by subject
-mean_by_s<-syx %>%
-        group_by(subject) %>%
+mean_by_sa<-syx %>%
+        group_by(subject,activity) %>%
         summarize_at(names(smry_x), mean)
 
-#find mean of each variable by activity
-mean_by_a<-syx %>%
-        group_by(activity) %>%
-        summarize_at(names(smry_x), mean)
-
-mean_by_sa<-list(mean_by_s,mean_by_a)
-
-mean_by_sa
+write.table(mean_by_sa,"summary_by_group.txt",row.names = FALSE)
   
