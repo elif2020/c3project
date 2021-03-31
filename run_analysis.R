@@ -52,4 +52,3 @@ mean_by_sa<-list(mean_by_s,mean_by_a)
 
 mean_by_sa
   
-          
