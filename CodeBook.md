@@ -4,12 +4,8 @@ author: "Elif"
 date: "3/30/2021"
 output:
   html_document: default
-  pdf_document: default
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 Following variable names are used to represent subject, activity and the relevant measurements to this study. Only the measurements on the mean and standard deviation for each measurement in the original data set is extracted.  
 
